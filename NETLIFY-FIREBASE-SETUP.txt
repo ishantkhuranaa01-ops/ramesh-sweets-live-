@@ -1,0 +1,7 @@
+RAMESH SWEETS - NETLIFY + FIREBASE
+
+1. Firebase Authentication -> Settings -> Authorized domains: add the Netlify domain.
+2. Firebase Firestore: ensure the database exists and authenticated users have the required
+   read/write rules for bookings, rates, and settings/shop.
+3. Netlify: connect this GitHub repository and deploy from the main branch.
+4. Test in two browser windows: changes to bookings/rates/settings should appear live.
