@@ -1,0 +1,9 @@
+[build]
+  publish = "."
+[build.processing]
+  skip_processing = true
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cache-Control = "public,max-age=0,must-revalidate"
