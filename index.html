@@ -1103,9 +1103,12 @@ form{padding:20px 22px 22px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
       render();
     },function(err){
       setSync("error","Sync stopped");
+      console.error("Firestore live-sync error:", err);
       showBanner(err&&err.code==="permission-denied"
         ? "This account isn't allowed to open the booking book. Ask the owner to check the database rules."
-        : "Live sync stopped. Check your internet connection and reload the page.");
+        : err&&err.code==="failed-precondition"
+        ? "Firestore is not available for this Firebase project yet. Create Firestore Database in Firebase Console and reload."
+        : "Live sync stopped ("+(err&&err.code||"unknown error")+"). Check Firebase and reload.");
     }));
     unsubs.push(db.collection("rates").onSnapshot(function(snap){
       rates=snap.docs.map(function(doc){return Object.assign({id:doc.id},doc.data())});
@@ -1160,7 +1163,7 @@ form{padding:20px 22px 22px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
     if(!configured()){screen("setup"); return}
     firebase.initializeApp(window.FIREBASE_CONFIG);
     auth=firebase.auth(); fsdb=firebase.firestore();
-    try{fsdb.settings({experimentalAutoDetectLongPolling:true})}catch(e){}
+    try{fsdb.settings({experimentalForceLongPolling:true, useFetchStreams:false})}catch(e){}
     fsdb.enablePersistence({synchronizeTabs:true}).catch(function(){});
     auth.onAuthStateChanged(function(user){
       if(user){screen("authed"); startSync()}
